@@ -1,0 +1,23 @@
+GenCompositor Community License Agreement
+
+
+# Preamble of the Agreement for GenCompositor
+
+This project, "GenCompositor", is based on the "CogVideoX-5B". In accordance with the licensing requirements of the CogVideoX-5B, the use of GenCompositor, as a derivative work of CogVideoX-5B, remains subject to the terms of The CogVideoX License. Details of The CogVideoX License can be found in the Notice file. 
+
+In addition to adhering to the terms of the The CogVideoX License, usage of any components originally developed or modified by us, is also subject to the following additional terms:
+
+
+## Additional Terms for GenCompositor Beyond The CogVideoX License:
+
+Copyright (C) 2025 Tencent. All rights reserved. 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+- You agree to use the GenCompositor only for academic purposes, and refrain from using it for any commercial or production purposes under any circumstances.
+
+- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+For avoidance of doubts, “Software” means the GenCompositor inference code, training code, and weights made available under this license excluding any pre-trained data and other AI components.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
