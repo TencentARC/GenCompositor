@@ -50,6 +50,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 ## 🛠️ Method Overview
 
 ![](assets/teaser.gif)
+
 Video compositing combines live-action footage to create video production, serving as a crucial technique in video creation and film production. 
 Traditional pipelines require intensive labor efforts and expert collaboration, resulting in lengthy production cycles and high manpower costs. 
 To address this issue, we automate this process with generative models, called generative video compositing. 
