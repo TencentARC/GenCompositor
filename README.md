@@ -212,3 +212,20 @@ Open your browser at http://localhost:7860
 <span id="acknowledgement"></span>
 
 Our code is modified based on [diffusers](https://github.com/huggingface/diffusers) and [CogVideoX](https://github.com/THUDM/CogVideo), thanks to all the contributors!
+
+## 📄 License
+
+We are pleased to support the open source community. For complete license details, see [LICENSE](LICENSE) and [NOTICE](NOTICE). 
+
+## 📬 Contact
+
+For any questions, feel free to [email](mailto:szyang@stu.pku.edu.cn).
+
+
+## 🌟 Star History
+
+<p align="center">
+    <a href="https://star-history.com/#TencentARC/GenCompositor" target="_blank">
+        <img width="500" src="https://api.star-history.com/svg?repos=TencentARC/GenCompositor&type=Date" alt="Star History Chart">
+    </a>
+</p>
