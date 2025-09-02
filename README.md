@@ -44,7 +44,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 - [x] Release inference code
 - [x] Release gradio demo
-- [ ] Release [GenCompositor checkpoints](https://huggingface.co/TencentARC/GenCompositor) (based on CogVideoX-5B)
+- [x] Release [GenCompositor checkpoints](https://huggingface.co/TencentARC/GenCompositor) (based on CogVideoX-5B)
 - [ ] Release training code
 - [ ] Data preprocessing code
 ## 🛠️ Method Overview
@@ -68,6 +68,9 @@ This data includes complete dynamic elements and high-quality target videos. Exp
 <details>
 <summary><b>Environment Requirement 🌍</b></summary>
 
+- CUDA 12.4
+- PyTorch 2.5.0
+- Python 3.10.16
 
 Clone the repo:
 
