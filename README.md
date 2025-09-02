@@ -22,11 +22,11 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 - [GenCompositor](#GenCompositor)
   - [🔥 Update Log](#-update-log)
-  - [TODO](#todo)
+  - [📌 TODO](#todo)
   - [🛠️ Method Overview](#️-method-overview)
   - [🚀 Getting Started](#-getting-started)
     - [Environment Requirement 🌍](#environment-requirement-)
-    - [Data Download ⬇️](#data-download-️)
+    - [Checkpoint Download ⬇️](#checkpoint-download-️)
   - [🏃🏼 Running Scripts](#-running-scripts)
     - [Inference 📜](#inference-)
     - [Gradio 🤗](#gradio-)
