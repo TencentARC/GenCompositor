@@ -186,7 +186,7 @@ python testinput.py --fg_video_path "../assets/fg/element/44867.mp4" --video_pat
 You can also inference through gradio demo:
 
 ```
-# cd app
+cd app
 CUDA_VISIBLE_DEVICES=0 python app.py
 ```
 
