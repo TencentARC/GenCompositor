@@ -6,8 +6,7 @@ This repository contains the implementation of the paper "GenCompositor: Generat
 Keywords: Diffusion Models, Video Editing, Video Compositing
 
 > [Shuzhou Yang](https://ysz2022.github.io/)<sup>1</sup>, [Xiaoyu Li](https://xiaoyu258.github.io/)<sup>2‡</sup>, [Xiaodong Cun](https://vinthony.github.io/)<sup>3</sup>, [Guangzhi Wang](http://gzwang.xyz/)<sup>2</sup>, [Lingen Li](https://lg-li.github.io/)<sup>4</sup>, [Ying Shan](https://www.linkedin.com/in/YingShanProfile/)<sup>2</sup>, [Jian Zhang](https://jianzhang.tech/)<sup>1✉</sup><br>
-> <sup>1</sup>SECE, Peking University <sup>2</sup>ARC Lab, Tencent PCG <sup>3</sup>GVC Lab, Great Bay University <sup>4</sup>The Chinese University of Hong Kong
-> <sup>‡</sup>Project Lead <sup>✉</sup>Corresponding Author
+> <sup>1</sup>SECE, Peking University <sup>2</sup>ARC Lab, Tencent PCG <sup>3</sup>GVC Lab, Great Bay University <sup>4</sup>The Chinese University of Hong Kong <sup>‡</sup>Project Lead <sup>✉</sup>Corresponding Author
 
 
 
