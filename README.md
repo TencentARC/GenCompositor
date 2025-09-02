@@ -22,14 +22,14 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 - [GenCompositor](#GenCompositor)
   - [🔥 Update Log](#-update-log)
-  - [📌 TODO](#todo)
+  - [📌 TODO](#-todo)
   - [🛠️ Method Overview](#️-method-overview)
   - [🚀 Getting Started](#-getting-started)
     - [Environment Requirement 🌍](#environment-requirement-)
     - [Checkpoints Download ⬇️](#checkpoints-download-️)
   - [🏃🏼 Running Scripts](#-running-scripts)
     - [Inference 📜](#inference-)
-    - [Gradio 🤗](#gradio-)
+    - [Gradio Demo 🤗](#gradio-demo-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
@@ -180,7 +180,7 @@ python testinput.py --fg_video_path "../assets/fg/element/44867.mp4" --video_pat
 </details>
 
 <details>
-<summary><b>Gradio Demo 🖌️</b></summary>
+<summary><b>Gradio Demo 🤗</b></summary>
 
 You can also inference through gradio demo:
 
