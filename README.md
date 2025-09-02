@@ -127,6 +127,7 @@ git clone https://huggingface.co/THUDM/CogVideoX-5b-I2V
 Finally, you need to download checkpoints of [sam2](https://github.com/IDEA-Research/Grounded-SAM-2) for foreground segmentation:
 
 ```
+cd ckpts
 wget -c https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt
 ```
 
