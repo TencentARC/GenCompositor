@@ -135,6 +135,11 @@ The checkpoints structure should be like:
 ```
 |-- ckpts
     |-- sam2.1_hiera_large.pt
+    |-- CogVideoX-5b-I2V
+        |-- scheduler
+        |-- transformer
+        |-- vae
+        |-- ...
     |-- model
         |-- pytorch_model
         |-- transformer
@@ -145,11 +150,6 @@ The checkpoints structure should be like:
         |-- random_states_3.pkl
         |-- scheduler.bin
         |-- zero_to_fp32.py
-    |-- CogVideoX-5b-I2V
-        |-- scheduler
-        |-- transformer
-        |-- vae
-        |-- ...
     |-- branch
         |-- config.json
         |-- diffusion_pytorch_model.safetensors
