@@ -28,19 +28,19 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
     - [Environment Requirement 🌍](#environment-requirement-)
     - [Data Download ⬇️](#data-download-️)
   - [🏃🏼 Running Scripts](#-running-scripts)
-    - [Training 🤯](#training-)
     - [Inference 📜](#inference-)
-    - [Evaluation 📏](#evaluation-)
+    - [Gradio 🤗](#gradio-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
-
+  - [📄 License](#-license)
+  - [📬 Contact](#-contact)
 
 
 ## 🔥 Update Log
 
 - [2025/9/2] 📢 📢  [GenCompositor](https://huggingface.co/TencentARC/GenCompositor) are released, the first generative video compositing framework with ERoPE for layout-unaligned video control.
 
-## TODO
+## 📌 TODO
 
 - [x] Release inference code
 - [x] Release gradio demo
