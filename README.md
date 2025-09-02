@@ -26,7 +26,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
   - [🛠️ Method Overview](#️-method-overview)
   - [🚀 Getting Started](#-getting-started)
     - [Environment Requirement 🌍](#environment-requirement-)
-    - [Checkpoint Download ⬇️](#checkpoint-download-️)
+    - [Checkpoints Download ⬇️](#checkpoints-download-️)
   - [🏃🏼 Running Scripts](#-running-scripts)
     - [Inference 📜](#inference-)
     - [Gradio 🤗](#gradio-)
@@ -103,7 +103,7 @@ conda install -c conda-forge ffmpeg -y
 </details>
 
 <details>
-<summary><b>Checkpoints</b></summary>
+<summary><b>Checkpoints Download ⬇️</b></summary>
 
 Checkpoints of GenCompositor can be downloaded from [here](https://huggingface.co/TencentARC/GenCompositor). The ckpts folder contains 
 
