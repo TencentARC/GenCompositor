@@ -1583,5 +1583,5 @@ with gr.Blocks(css=css) as demo:
 demo.launch(
     server_name="0.0.0.0",
     server_port=7860,
-    allowed_paths=["/group/40075/shuzhouyang/GenCompositor-main/assets"]
+    allowed_paths=["../assets"]
 )
