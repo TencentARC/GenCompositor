@@ -151,6 +151,10 @@ The checkpoints structure should be like:
         |-- random_states_1.pkl
         |-- random_states_2.pkl
         |-- random_states_3.pkl
+        |-- random_states_4.pkl
+        |-- random_states_5.pkl
+        |-- random_states_6.pkl
+        |-- random_states_7.pkl
         |-- scheduler.bin
         |-- zero_to_fp32.py
     |-- sam2.1_hiera_large.pt
