@@ -769,12 +769,12 @@ def generate_video(
 
 # -------- Your samples --------
 sample_videos = [
-    "../assets/bg/511307.mp4",
-    "../assets/bg/100115.mp4",
+    "../assets/bg/sora15.mp4",
+    "../assets/bg/42858.mp4",
     "../assets/fg/44867.mp4",
     "../assets/fg/45871.mp4",
     "../assets/fg/47853.mp4",
-    "../assets/bg/42858.mp4",
+    "../assets/fg/fg_butterfly.mp4",
 ]
 
 thumbnails = [get_first_frame(p) for p in sample_videos]
