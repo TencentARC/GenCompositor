@@ -46,7 +46,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 - [x] Release gradio demo
 - [x] Release [GenCompositor checkpoints](https://huggingface.co/TencentARC/GenCompositor) (based on CogVideoX-5B)
 - [ ] Release training code
-- [ ] Data preprocessing code
+- [ ] Dataset curation code
 ## 🛠️ Method Overview
 
 ![](assets/teaser.gif)
