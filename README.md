@@ -49,7 +49,9 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 - [ ] Dataset curation code
 ## 🛠️ Method Overview
 
-![](assets/method.jpg)
+![](assets/teaser.gif)
+
+<details>
 Video compositing combines live-action footage to create video production, serving as a crucial technique in video creation and film production. 
 Traditional pipelines require intensive labor efforts and expert collaboration, resulting in lengthy production cycles and high manpower costs. 
 To address this issue, we automate this process with generative models, called generative video compositing. 
@@ -60,8 +62,8 @@ As to inherit dynamic elements from other sources, a DiT fusion block is propose
 Besides, for fusing background and foreground videos with different layouts based on user control, we developed a novel position embedding, named Extended Rotary Position Embedding (ERoPE). 
 Finally, we curated a dataset comprising 61K sets of videos for our new task, called VideoComp. 
 This data includes complete dynamic elements and high-quality target videos. Experiments demonstrate that our method effectively realizes generative video compositing, outperforming existing possible solutions in fidelity and consistency.
-
-![](assets/teaser.gif)
+![](assets/method.jpg)
+</details>
 
 ## 🚀 Getting Started
 
