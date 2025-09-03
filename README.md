@@ -28,8 +28,8 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
     - [Environment Requirement 🌍](#environment-requirement-)
     - [Checkpoints Download ⬇️](#checkpoints-download-️)
   - [🏃🏼 Running Scripts](#-running-scripts)
-    - [Inference 📜](#inference-)
     - [Gradio Demo 🤗](#gradio-demo-)
+    - [Inference 📜](#inference-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
@@ -158,11 +158,24 @@ The checkpoints structure should be like:
 </details>
 
 ## 🏃🏼 Running Scripts
+<details>
+<summary><b>Gradio Demo 🤗</b></summary>
+
+You can easily utlize our model through gradio demo:
+
+```
+cd app
+CUDA_VISIBLE_DEVICES=0 python app.py
+```
+
+Open your browser at http://localhost:7860
+
+</details>
 
 <details>
 <summary><b>Inference 📜</b></summary>
 
-Let's composite videos with the script:
+Alternatively, you can also inference with the script:
 
 ```
 cd infer
@@ -179,21 +192,6 @@ python testinput.py --fg_video_path "../assets/fg/element/44867.mp4" --video_pat
 ```
 
 </details>
-
-<details>
-<summary><b>Gradio Demo 🤗</b></summary>
-
-You can also inference through gradio demo:
-
-```
-cd app
-CUDA_VISIBLE_DEVICES=0 python app.py
-```
-
-Open your browser at http://localhost:7860
-
-</details>
-
 
 
 
