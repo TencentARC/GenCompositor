@@ -12,7 +12,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 <p align="center">
 <a href='https://gencompositor.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> &nbsp;
-<a href="https://arxiv.org/abs/2503.05639"><img src="https://img.shields.io/badge/arXiv-2503.05639-b31b1b.svg"></a> &nbsp;
+<a href="https://arxiv.org/abs/2509.02460"><img src="https://img.shields.io/badge/arXiv-2509.02460-b31b1b.svg"></a> &nbsp;
 <a href="https://huggingface.co/TencentARC/GenCompositor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue"></a>
 </p>
 
@@ -201,7 +201,7 @@ python testinput.py --fg_video_path "../assets/fg/element/44867.mp4" --video_pat
 @article{GenCompositor,
   title={GenCompositor: Generative Video Compositing with Diffusion Transformer},
   author={Shuzhou Yang and Xiaoyu Li and Xiaodong Cun and Guangzhi Wang and Lingen Li and Ying Shan and Jian Zhang},
-  journal={arXiv preprint arXiv:2509.},
+  journal={arXiv preprint arXiv:2509.02460},
   year={2025}
 }
 ```
