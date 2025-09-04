@@ -189,10 +189,10 @@ bash preprocess_bg_fg_videos.sh
 
 # Drag trajectory (We recommend to perform this interactive step on your local host❗️)
 ##(1)In the pop-up window, hold down the left mouse button and drag to specify the movement trajectory. (2)Press the "ESC" key to exit and automatically output final binary mask video.
-python get_movemask.py --rescale 1.0 --fg_video_path "../assets/fg/element/44867.mp4" --video_path "../assets/bg/source/511307.mp4" --file_path "../assets/usr_mask/511307_traj.txt" --usr_mask_path "../assets/usr_mask/511307_traj.mp4"
+python get_movemask.py --rescale 0.4 --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --file_path "../assets/usr_mask/sora15_traj.txt" --usr_mask_path "../assets/usr_mask/sora15_traj.mp4"
 
 # Video compositing (GenCompositor starts work❗️)
-python testinput.py --fg_video_path "../assets/fg/element/44867.mp4" --video_path "../assets/bg/source/511307.mp4" --mask_path "../assets/usr_mask/511307_traj.mp4" --output_path "./output.mp4" --num_inference_steps 50
+python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --mask_path "../assets/usr_mask/sora15_traj.mp4" --output_path "./output.mp4" --num_inference_steps 10
 ```
 
 </details>
