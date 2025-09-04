@@ -71,6 +71,7 @@ This data includes complete dynamic elements and high-quality target videos. Exp
 - CUDA 12.4
 - PyTorch 2.5.0
 - Python 3.10.16
+- VRAM >= 40GB
 
 Clone the repo:
 
