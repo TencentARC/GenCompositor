@@ -192,7 +192,7 @@ bash preprocess_bg_fg_videos.sh
 python get_movemask.py --rescale 0.4 --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --file_path "../assets/usr_mask/sora15_traj.txt" --usr_mask_path "../assets/usr_mask/sora15_traj.mp4"
 
 # Video compositing (GenCompositor starts work❗️)
-python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --mask_path "../assets/usr_mask/sora15_traj.mp4" --output_path "./output.mp4" --num_inference_steps 10
+python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --mask_path "../assets/usr_mask/sora15_traj.mp4" --output_path "./output.mp4" --num_inference_steps 20
 ```
 
 </details>
