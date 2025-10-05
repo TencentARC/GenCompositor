@@ -191,7 +191,7 @@ bash preprocess_bg_fg_videos.sh
 # Drag trajectory (We recommend to perform this interactive step on your local host❗️)
 ##(1)In the pop-up window, hold down the left mouse button and drag to specify the movement trajectory. (2)Press the "ESC" key to exit and automatically output final binary mask video.
 python usr.py --video_path "../assets/bg/source/sora15.mp4" --file_path "../assets/usr_mask/sora15_traj.txt"
-
+## Getting mask video (sora15_traj.mp4) based on the specified trajectory txt file (sora15_traj.txt).
 python get_movemask.py --rescale 0.4 --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --video_path "../assets/bg/source/sora15.mp4" --file_path "../assets/usr_mask/sora15_traj.txt" --usr_mask_path "../assets/usr_mask/sora15_traj.mp4"
 
 # Video compositing (GenCompositor starts work❗️)
