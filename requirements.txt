@@ -1,6 +1,6 @@
 torch==2.5.0
 torchvision==0.20.0
-transformers==4.46.2
+transformers==4.57.1
 accelerate>=0.34.2
 torchaudio==2.5.0
 git+https://github.com/microsoft/DeepSpeed.git
