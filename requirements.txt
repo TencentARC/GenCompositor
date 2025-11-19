@@ -45,6 +45,6 @@ omegaconf==2.3.0
 beartype==0.18.5
 fsspec==2024.5.0
 safetensors==0.4.3
-huggingface-hub==0.30.2
+huggingface-hub==0.36.0
 av==12.3.0
 gdown
