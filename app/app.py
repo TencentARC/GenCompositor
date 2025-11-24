@@ -46,9 +46,9 @@ def unwrap_model(model):
 
 # Pre-load models
 dtype = torch.bfloat16
-model_path = "../ckpts/CogVideoX-5b-I2V"
+model_path = "/group/40005/shuzhouyang/huggingface/CogVideoX-5b-I2V"
 inpainting_branch = "../ckpts/branch"
-transformer_path = "../ckpts/model"
+transformer_path = "/group/40005/shuzhouyang/GenCompositor-main/train/compositing/GenCompositor_sep/checkpoint-45056"
 
 branch = CogvideoXBranchModel.from_pretrained(inpainting_branch, torch_dtype=dtype).to("cuda", dtype=dtype)
 transformer = CogVideoXTransformer3D3BModel_sep.from_pretrained(
@@ -126,7 +126,7 @@ def cleanup_temp_files(paths):
         except Exception as e:
             logger.warning(f"清理临时文件失败 {path}: {e}")
 
-def extract_frames(video_path, output_dir, start_frame=0, end_frame=100):
+def extract_frames(video_path, output_dir, start_frame=0, end_frame=48):
     """从视频中提取帧"""
     ensure_directory_exists(output_dir)
     cap = cv2.VideoCapture(video_path)
@@ -146,7 +146,7 @@ def extract_frames(video_path, output_dir, start_frame=0, end_frame=100):
     cap.release()
     return frame_count
 
-def create_video_from_frames(frames_dir, output_path, fps=24):
+def create_video_from_frames(frames_dir, output_path, fps=12):
     """从帧创建视频"""
     frame_names = sorted([f for f in os.listdir(frames_dir) if f.endswith(('.jpg', '.png'))])
     if not frame_names:
@@ -166,8 +166,11 @@ def create_video_from_frames(frames_dir, output_path, fps=24):
     return True
 
 # -------- Video Processing Functions --------
-def adjust_video_resolution(video_path, target_width=720, target_height=480, target_frames=100, target_fps=24):
-    """调整视频分辨率、帧数和帧率，直接取前100帧"""
+def adjust_video_resolution(video_path, target_width=720, target_height=480, target_frames=49, target_fps=12):
+    """调整视频分辨率、帧数和帧率：
+       - 对短视频逐帧读取
+       - 对长视频根据总帧数自动跳帧，最多写 target_frames 帧
+    """
     if not video_path or not os.path.exists(video_path):
         return None, "Please provide a valid video file"
 
@@ -180,32 +183,81 @@ def adjust_video_resolution(video_path, target_width=720, target_height=480, tar
         if not cap.isOpened():
             return None, "Unable to open video file"
 
+        # 先看原视频总帧数
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(f"[adjust_video_resolution] total_frames = {total_frames}")
+
+        # -------- 计算跳帧间隔 skip_interval --------
+        skip_interval = 0
+        if total_frames >= 200 and total_frames < 300:
+            skip_interval = 1
+        elif total_frames >= 300 and total_frames < 400:
+            skip_interval = 2
+        elif total_frames >= 400:
+            # 对于400帧以上的视频，每增加100帧，跳帧间隔增加1
+            # skip_interval = (total_frames // 100) - 2
+            skip_interval = 3
+
+        stride = skip_interval + 1
+        if skip_interval > 0:
+            print(f"[adjust_video_resolution] 启用跳帧功能，跳帧间隔: {skip_interval} (stride={stride})")
+        else:
+            print("[adjust_video_resolution] 不启用跳帧功能，逐帧读取 (stride=1)")
+        # -------------------------------------------
+
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         out = cv2.VideoWriter(temp_output_path, fourcc, target_fps, (target_width, target_height))
 
-        frame_count = 0
-        last_frame = None
+        sampled_frames = []  # 保存已经写出的帧（resize 后）
 
-        while frame_count < target_frames:
+        written_frames = 0
+        src_idx = 0  # 原视频帧索引
+
+        # 先按 stride 从头采样，直到写满 target_frames 或读完视频
+        while True:
             ret, frame = cap.read()
-
             if not ret:
-                if last_frame is not None:
-                    frame = last_frame.copy()
-                else:
+                break
+
+            if src_idx % stride == 0:
+                resized_frame = cv2.resize(frame, (target_width, target_height))
+                out.write(resized_frame)
+                sampled_frames.append(resized_frame)
+                written_frames += 1
+
+                if written_frames >= target_frames:
                     break
 
-            resized_frame = cv2.resize(frame, (target_width, target_height))
-            out.write(resized_frame)
-            frame_count += 1
-            last_frame = frame
+            src_idx += 1
 
         cap.release()
-        out.release()
 
+        if len(sampled_frames) == 0:
+            out.release()
+            return None, "No frames written during adjustment"
+
+        # 若采样帧数不足 target_frames，则用 ping-pong 方式补帧
+        if written_frames < target_frames:
+            n = len(sampled_frames)
+            backward_indices = list(range(n - 1, -1, -1))  # 从后往前
+            forward_indices = list(range(n))               # 从前往后
+            patterns = [backward_indices, forward_indices]
+            pattern_idx = 0  # 0 -> backward, 1 -> forward
+
+            while written_frames < target_frames:
+                seq = patterns[pattern_idx]
+                for idx in seq:
+                    if written_frames >= target_frames:
+                        break
+                    out.write(sampled_frames[idx])
+                    written_frames += 1
+                pattern_idx = 1 - pattern_idx  # 方向切换
+
+        out.release()
         return temp_output_path, "Adjustment successful"
     except Exception as e:
         return None, f"Adjustment Failed: {str(e)}"
+
 
 def process_foreground_video(fg_video, fg_points):
     """使用SAM2处理前景视频，基于用户点击的点"""
@@ -220,8 +272,8 @@ def process_foreground_video(fg_video, fg_points):
         fg_video,
         target_width=720,
         target_height=480,
-        target_frames=100,
-        target_fps=24
+        target_frames=49,
+        target_fps=12
     )
 
     if not adjusted_fg_video:
@@ -239,7 +291,7 @@ def process_foreground_video(fg_video, fg_points):
     
     try:
         # 提取视频帧
-        frame_count = extract_frames(adjusted_fg_video, frames_dir, 0, 100)
+        frame_count = extract_frames(adjusted_fg_video, frames_dir, 0, 48)
         if frame_count == 0:
             return None, None, None, "Unable to extract video frame"
             
@@ -316,12 +368,12 @@ def process_foreground_video(fg_video, fg_points):
         
         # 创建前景元素视频
         element_video_path = os.path.join(temp_dir, "element_video.mp4")
-        if not create_video_from_frames(element_dir, element_video_path, fps=24):
+        if not create_video_from_frames(element_dir, element_video_path, fps=12):
             return None, None, None, "Failed to create foreground element video"
             
         # 创建掩码视频
         mask_video_path = os.path.join(temp_dir, "mask_video.mp4")
-        if not create_video_from_frames(mask_dir, mask_video_path, fps=24):
+        if not create_video_from_frames(mask_dir, mask_video_path, fps=12):
             return None, None, None, "Failed to create mask video"
             
         return adjusted_fg_video, mask_video_path, element_video_path, "Foreground video processing successful"
@@ -343,8 +395,8 @@ def auto_adjust_background_video(video_path):
         video_path,
         target_width=720,
         target_height=480,
-        target_frames=100,
-        target_fps=24
+        target_frames=49,
+        target_fps=12
     )
 
     return adjusted_video, status
@@ -358,8 +410,8 @@ def auto_adjust_foreground_video(video_path):
         video_path,
         target_width=720,
         target_height=480,
-        target_frames=100,
-        target_fps=24
+        target_frames=49,
+        target_fps=12
     )
 
     return adjusted_video, status
@@ -692,15 +744,15 @@ def generate_video(
         overlap_frames: int = 0,
         prev_clip_weight: float = 0.0,
         start_frame: int = 0,
-        end_frame: int = 100,
+        end_frame: int = 49,
         img_inpainting_model: str = None,
         llm_model: str = None,
         long_video: bool = False,
         dilate_size: int = -1,
         id_adapter_resample_learnable_path: str = None,
 ):
-    fps = 24
-    # 使用固定提示词
+    fps = 12
+    # Using fixed prompt
     prompt = "A realistic scene with objects moving naturally"
     
     try:
@@ -718,24 +770,67 @@ def generate_video(
         )
 
         if generate_type == "i2v_inpainting":
-            frames = inpainting_frames
-            down_sample_fps = fps // 2
-            video, masked_video, binary_masks, fg_video, fgy_video = (
-                video[::int(fps // down_sample_fps)],
-                masked_video[::int(fps // down_sample_fps)],
-                binary_masks[::int(fps // down_sample_fps)],
-                fg_video[::int(fps // down_sample_fps)],
-                fgy_video[::int(fps // down_sample_fps)],
-            )
-            video, masked_video, binary_masks, fg_video, fgy_video = (
-                video[:frames],
-                masked_video[:frames],
-                binary_masks[:frames],
-                fg_video[:frames],
-                fgy_video[:frames],
-            )
-            if len(video) < frames:
-                raise ValueError(f"video length is less than {frames}, len(video): {len(video)}")
+            frames = inpainting_frames  # 一般是 49
+
+            total_frames = len(video)
+            if total_frames == 0:
+                raise ValueError("No frames loaded from video/mask/foreground")
+
+            # 只考虑全部帧作为候选
+            max_use = total_frames
+
+            # -------- 根据“原视频总帧数”决定跳帧间隔 --------
+            skip_interval = 0
+            if total_frames >= 200 and total_frames < 300:
+                skip_interval = 1
+            elif total_frames >= 300 and total_frames < 400:
+                skip_interval = 2
+            elif total_frames >= 400:
+                # 对于400帧以上的视频，每增加100帧，跳帧间隔增加1
+                skip_interval = (total_frames // 100) - 2
+            stride = skip_interval + 1
+
+            if skip_interval > 0:
+                print(f"[generate_video] Enable frame skipping function, frame skipping interval: {skip_interval} (stride={stride}), total_frames={total_frames}")
+            else:
+                print(f"[generate_video] Disable frame skipping, use frame-by-frame (stride=1), total_frames={total_frames}")
+            # ------------------------------------------------
+            # 先按 stride 从 0 ~ max_use-1 采样一串候选索引
+            indices = list(range(0, max_use, stride))
+
+            # 如果采出来的索引比 49 多，就截到 49；不够 49 就循环补齐（改为 ping-pong）
+            if len(indices) >= frames:
+                indices = indices[:frames]
+            else:
+                if len(indices) == 0:
+                    # 极端情况：max_use=0 已经在前面报错了，理论不会到这里
+                    indices = [0] * frames
+                else:
+                    base = indices.copy()
+                    # base 是一次从前到后的采样结果，例如 [0, stride, 2*stride, ...]
+                    forward_indices = base
+                    backward_indices = list(reversed(base))
+                    patterns = [backward_indices, forward_indices]  # 先后->前，再前->后
+                    pattern_idx = 0  # 0 表示先用 backward，再用 forward
+
+                    while len(indices) < frames:
+                        seq = patterns[pattern_idx]
+                        for idx in seq:
+                            if len(indices) >= frames:
+                                break
+                            indices.append(idx)
+                        # 切换方向：backward <-> forward
+                        pattern_idx = 1 - pattern_idx
+
+
+            # 按选中的索引重排所有序列，保证长度一致且 = frames
+            video = [video[i] for i in indices]
+            masked_video = [masked_video[i] for i in indices]
+            binary_masks = [binary_masks[i] for i in indices]
+            fg_video = [fg_video[i] for i in indices]
+            fgy_video = [fgy_video[i] for i in indices]
+
+
             inpaint_outputs = pipe(
                 prompt=prompt,
                 num_videos_per_prompt=num_videos_per_prompt,
@@ -754,6 +849,7 @@ def generate_video(
                 id_pool_resample_learnable=False,
                 output_type="np"
             ).frames[0]
+
             torch.cuda.empty_cache()
             video_generate = inpaint_outputs
             output_dir = './results'
@@ -1458,7 +1554,7 @@ with gr.Blocks(css=css) as demo:
                             overlap_frames=0,
                             prev_clip_weight=0.0,
                             start_frame=0,
-                            end_frame=100,
+                            end_frame=49,
                             img_inpainting_model=None,
                             llm_model=None,
                             long_video=False,
@@ -1561,7 +1657,7 @@ with gr.Blocks(css=css) as demo:
                             overlap_frames=0,
                             prev_clip_weight=0.0,
                             start_frame=0,
-                            end_frame=100,
+                            end_frame=49,
                             img_inpainting_model=None,
                             llm_model=None,
                             long_video=False,
