@@ -18,12 +18,13 @@ from PIL import Image
 
 import sys 
 sys.path.append("..")
-from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
-from utils.video_utils import calculate_max_mask_ratio, process_frame
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
 from sam2.build_sam import build_sam2_video_predictor, build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
+from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
+
+from utils.video_utils import calculate_max_mask_ratio, process_frame
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 设置参数
 parser = argparse.ArgumentParser()
@@ -45,7 +46,7 @@ parser.add_argument('--fg_path', type=str, default='../assets/fg/element', help=
 parser.add_argument('--fps', type=float, default=1, help='fps')
 # 设置轨迹长度
 parser.add_argument('--len_track', type=int, default=0, help='len_track')
-parser.add_argument('--fps_vis', type=int, default=24, help='len_track')
+parser.add_argument('--fps_vis', type=int, default=12, help='len_track')
 # 裁剪视频
 parser.add_argument('--crop', action='store_true', help='whether to crop the video')
 parser.add_argument('--crop_factor', type=float, default=1, help='whether to crop the video')
@@ -84,223 +85,88 @@ def save_mask(mask, frame_idx, output_dir):
     mask_image.save(os.path.join(output_dir, f"{frame_idx:05d}.png"))
 
 
-# 前景居中-------------------------------------------------------------------------
-def create_fg_video(ori_folder, mask_folder, output_video_path, output_video_path1, frame_rate=24):
-    output_height = 576
-    output_width = 576
-    threshold = 0.8
-    kernel = np.ones((9, 9), np.uint8)  # 定义形态学操作的内核大小
-    # define valid extension
+# 前景整帧输出：和 app.py 一样，只把背景变白，不做 576×576 居中缩放 --------------------------
+def create_fg_video(ori_folder, mask_folder, output_video_path, output_video_path1, frame_rate=12):
+    """
+    ori_folder: 原始前景帧（整帧）
+    mask_folder: 对应的二值 mask 帧（前景为 255，背景为 0）
+    output_video_path: 保存 mask 视频
+    output_video_path1: 保存白底前景 element 视频
+    frame_rate: 输出视频帧率
+    """
+
+    # 支持的图片后缀
     valid_extensions = [".jpg", ".jpeg", ".JPG", ".JPEG", ".png", ".PNG"]
-    
-    # get all image files in the folder
-    image_files = [f for f in os.listdir(mask_folder) 
+
+    # 读取 mask 文件列表
+    image_files = [f for f in os.listdir(mask_folder)
                    if os.path.splitext(f)[1] in valid_extensions]
-    image_files.sort()  # sort the files in alphabetical order
+    image_files.sort()
     if not image_files:
         raise ValueError("No valid image files found in the specified folder.")
-    
-    ori_files = [f for f in os.listdir(ori_folder) 
+
+    # 读取 ori 文件列表
+    ori_files = [f for f in os.listdir(ori_folder)
                  if os.path.splitext(f)[1] in valid_extensions]
-    ori_files.sort()  # sort the files in alphabetical order
+    ori_files.sort()
 
-    # load the first image to get the dimensions of the video
-    first_image_path = os.path.join(mask_folder, image_files[0])
-    first_image = cv2.imread(first_image_path)
-    height, width, _ = first_image.shape
-    
-    # create a video writer
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v') # codec for saving the video
+    if len(ori_files) != len(image_files):
+        print(f"Warning: ori_files ({len(ori_files)}) and mask_files ({len(image_files)}) have different lengths.")
+        min_len = min(len(ori_files), len(image_files))
+        ori_files = ori_files[:min_len]
+        image_files = image_files[:min_len]
+
+    # 用第一帧确定分辨率
+    first_mask_path = os.path.join(mask_folder, image_files[0])
+    first_mask = cv2.imread(first_mask_path, cv2.IMREAD_GRAYSCALE)
+    if first_mask is None:
+        print(f"Error: cannot read first mask frame: {first_mask_path}")
+        return 0
+    height, width = first_mask.shape[:2]
+
+    # 创建两个视频写入器：mask 视频、白底前景视频，分辨率都与原视频一致
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video_writer = cv2.VideoWriter(output_video_path, fourcc, frame_rate, (width, height))
-    video_writer1 = cv2.VideoWriter(output_video_path1, fourcc, frame_rate, (output_width, output_height))
+    video_writer1 = cv2.VideoWriter(output_video_path1, fourcc, frame_rate, (width, height))
 
-    # 计算所有帧的最大 mask_ratio
-    max_mask_ratio = calculate_max_mask_ratio(mask_folder, output_width, output_height)
-
-    de_scale = int(max_mask_ratio) + 1
-
-    # 初始化变量
-    min_object_width = float('inf')  # 记录最小 bounding box 宽度
-    min_object_height = float('inf')  # 记录最小 bounding box 高度
-    frame_count = 0  # 当前帧数
-    ups2 = 0
-
-    # 使用多线程处理前12帧
-    with ThreadPoolExecutor() as executor:
-        futures = []
-        for image_file, ori_file in zip(image_files[:12], ori_files[:12]):
-            image_path = os.path.join(mask_folder, image_file)
-            ori_path = os.path.join(ori_folder, ori_file)
-            futures.append(executor.submit(process_frame, image_path, ori_path, height, width))
-
-        for future in futures:
-            result = future.result()
-            if result is None:
-                video_writer.release()
-                video_writer1.release()
-                return 0
-
-            image, ori, object_width, object_height, touches_edge = result
-
-            if touches_edge:
-                print(f"Warning: Object in mask {image_file} touches the image edge.")
-            else:
-                # 更新最小 bounding box
-                min_object_width = min(min_object_width, object_width)
-                min_object_height = min(min_object_height, object_height)
-
-            # 将前12帧写入视频
-            video_writer.write(image)
-            # 处理前12帧的背景替换
-            white_background = np.ones_like(ori) * 255  # 创建白色背景
-            masked_frame = cv2.bitwise_and(ori, image)  # 保留物体区域
-            inverted_mask = cv2.bitwise_not(image)  # 反转mask
-            white_background = cv2.bitwise_and(white_background, inverted_mask)  # 保留白色背景
-            processed_frame = cv2.add(masked_frame, white_background)  # 结合物体和白色背景
-
-            # 找到mask中白色区域的边界
-            rows, cols, _ = np.where(image == 255)
-            min_x, min_y = min(cols), min(rows)
-            max_x, max_y = max(cols), max(rows)
-            object_width = max_x - min_x
-            object_height = max_y - min_y
-
-            # 裁剪物体区域
-            cropped_object = processed_frame[min_y:max_y, min_x:max_x]
-            # 创建一个固定大小的白色背景画布
-            canvas = np.ones((output_height, output_width, 3), dtype=np.uint8) * 255
-
-            # 计算物体尺寸与画布尺寸的百分比
-            width_ratio = object_width / output_width
-            height_ratio = object_height / output_height
-            max_ratio = max(width_ratio, height_ratio)  # 取宽度和高度的最大比例
-
-            if frame_count == 0 and max_mask_ratio < 1:
-                if max_ratio < 0.1:        # 如果第0帧的物体尺寸小于画布尺寸的10%
-                    ups2 = 4
-                elif max_ratio < 0.3:
-                    ups2 = 2
-
-            # 调整物体大小
-            if ups2:
-                if ups2 == 4 and max_ratio >=0.2:
-                    video_writer.release()
-                    video_writer1.release()
-                    return 0  # 终止当前函数运行
-                elif ups2 ==2 and max_ratio >= 0.4:
-                    video_writer.release()
-                    video_writer1.release()
-                    return 0  # 终止当前函数运行
-                # 放大一倍
-                new_width = int(object_width * ups2)
-                new_height = int(object_height * ups2)
-                cropped_object = cv2.resize(cropped_object, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
-                object_width = new_width
-                object_height = new_height
-            else:
-                new_width = int(object_width // de_scale)
-                new_height = int(object_height // de_scale)
-                cropped_object = cv2.resize(cropped_object, (new_width, new_height), interpolation=cv2.INTER_AREA)
-                object_width = new_width
-                object_height = new_height
-
-            # 计算物体在画布上的起始位置（居中）
-            start_x = (output_width - object_width) // 2
-            start_y = (output_height - object_height) // 2
-
-            # 将裁剪后的物体放置到画布上
-            canvas[start_y:start_y + object_height, start_x:start_x + object_width] = cropped_object[:object_height, :object_width]
-            video_writer1.write(canvas)
-
-            frame_count += 1
-
-    # 处理剩余的帧
-    for image_file, ori_file in zip(image_files[12:], ori_files[12:]):
-        image_path = os.path.join(mask_folder, image_file)
+    for image_file, ori_file in zip(image_files, ori_files):
+        mask_path = os.path.join(mask_folder, image_file)
         ori_path = os.path.join(ori_folder, ori_file)
-        image = cv2.imread(image_path)
+
+        # 读 mask（灰度）和原图（BGR）
+        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
         ori = cv2.imread(ori_path)
 
-        # 将mask二值化（确保mask是二元的）
-        _, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
-        # 1. 使用形态学操作去除零星噪声
-        image = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)  # 开运算去除噪声
-
-        # 检测是否有目标物体
-        rows, cols, _ = np.where(image == 255)
-        if len(rows) == 0 or len(cols) == 0:
-            print(f"Warning: No object found in mask for {ori_file}")
+        if mask is None or ori is None:
+            print(f"Error: cannot read mask or ori frame: {mask_path}, {ori_path}")
             video_writer.release()
             video_writer1.release()
             return 0
 
-        # 计算白色区域的 bounding box
-        min_x, min_y = min(cols), min(rows)
-        max_x, max_y = max(cols), max(rows)
-        object_width = max_x - min_x
-        object_height = max_y - min_y
+        # 尺寸不一致时，强制 resize 到 (width, height)
+        if mask.shape[:2] != (height, width):
+            mask = cv2.resize(mask, (width, height), interpolation=cv2.INTER_NEAREST)
+        if ori.shape[:2] != (height, width):
+            ori = cv2.resize(ori, (width, height), interpolation=cv2.INTER_LINEAR)
 
-        # 屏蔽背景：保留物体区域，背景替换为白色
-        white_background = np.ones_like(ori) * 255  # 创建白色背景
-        # print('ori: ', ori.shape, ori.dtype, '|', 'image: ', image.shape, image.dtype)
-        masked_frame = cv2.bitwise_and(ori, image)  # 保留物体区域
-        inverted_mask = cv2.bitwise_not(image)  # 反转mask
-        white_background = cv2.bitwise_and(white_background, inverted_mask)  # 保留白色背景
-        processed_frame = cv2.add(masked_frame, white_background)  # 结合物体和白色背景
+        # 二值化 mask，前景 255，背景 0
+        _, mask_bin = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
 
-        # 找到mask中白色区域的边界
-        min_x, min_y = min(cols), min(rows)
-        max_x, max_y = max(cols), max(rows)
-        object_width = max_x - min_x
-        object_height = max_y - min_y
+        # 1) mask 视频：写三通道 BGR
+        mask_bgr = cv2.cvtColor(mask_bin, cv2.COLOR_GRAY2BGR)
+        video_writer.write(mask_bgr)
 
-        # 裁剪物体区域
-        cropped_object = processed_frame[min_y:max_y, min_x:max_x]
-        # 创建一个固定大小的白色背景画布
-        canvas = np.ones((output_height, output_width, 3), dtype=np.uint8) * 255
+        # 2) element 视频：整帧分辨率，mask 外置为白色
+        element = ori.copy()
+        element[mask_bin == 0] = 255  # 背景变白
+        video_writer1.write(element)
 
-        # 计算物体尺寸与画布尺寸的百分比
-        width_ratio = object_width / output_width
-        height_ratio = object_height / output_height
-        max_ratio = max(width_ratio, height_ratio)  # 取宽度和高度的最大比例
-
-        # 调整物体大小
-        if ups2:
-            if ups2 == 4 and max_ratio >=0.2:
-                video_writer.release()
-                video_writer1.release()
-                return 0  # 终止当前函数运行
-            elif ups2 ==2 and max_ratio >= 0.4:
-                video_writer.release()
-                video_writer1.release()
-                return 0  # 终止当前函数运行
-            # 放大一倍
-            new_width = int(object_width * ups2)
-            new_height = int(object_height * ups2)
-            cropped_object = cv2.resize(cropped_object, (new_width, new_height), interpolation=cv2.INTER_LINEAR)
-            object_width = new_width
-            object_height = new_height
-        else:
-            new_width = int(object_width // de_scale)
-            new_height = int(object_height // de_scale)
-            cropped_object = cv2.resize(cropped_object, (new_width, new_height), interpolation=cv2.INTER_AREA)
-            object_width = new_width
-            object_height = new_height
-
-        # 计算物体在画布上的起始位置（居中）
-        start_x = (output_width - object_width) // 2
-        start_y = (output_height - object_height) // 2
-        # 将裁剪后的物体放置到画布上
-        canvas[start_y:start_y + object_height, start_x:start_x + object_width] = cropped_object[:object_height, :object_width]
-        
-        video_writer.write(image)
-        video_writer1.write(canvas)
-    
-    # source release
     video_writer.release()
     video_writer1.release()
-    print(f"Video saved at {output_video_path}")
+    print(f"Video saved at {output_video_path} and {output_video_path1}")
     return 1
+# ---------------------------------------------------------------------------
+
 
 
 PROMPT_TYPE_FOR_VIDEO = "box" # choose from ["point", "box", "mask"]
@@ -332,7 +198,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 processor = AutoProcessor.from_pretrained(model_id)
 grounding_model = AutoModelForZeroShotObjectDetection.from_pretrained(model_id).to(device)
 
-FRAME_THRESHOLD = 50
+FRAME_THRESHOLD = 49
 
     
 
@@ -378,16 +244,82 @@ with sv.ImageSink(
     image_name_pattern="{:05d}.jpg"
 ) as sink:
     for frame in tqdm(frame_generator, desc="Saving Video Frames"):
-        # frame = cv2.resize(frame, (frame.shape[1] // 2, frame.shape[0] // 2))
-        frame = cv2.resize(frame, (720, 480))
+        frame = cv2.resize(frame, (frame.shape[1], frame.shape[0]))
         sink.save_image(frame)
 
-# scan all the JPEG frame names in this directory
+# ---------------- 固定为 49 帧的采样策略 ----------------
+# 先列出刚刚保存的所有帧
 frame_names = [
     p for p in os.listdir(SOURCE_VIDEO_FRAME_DIR)
     if os.path.splitext(p)[-1] in [".jpg", ".jpeg", ".JPG", ".JPEG"]
 ]
 frame_names.sort(key=lambda p: int(os.path.splitext(p)[0]))
+
+num_frames = len(frame_names)
+if num_frames == 0:
+    raise ValueError(f"No frames found in {SOURCE_VIDEO_FRAME_DIR}")
+
+MIN_FRAMES = 49
+
+if num_frames >= MIN_FRAMES:
+    # 已经有不少帧了：从中“均匀”采样 49 帧
+    if num_frames < 400:
+        indices = np.linspace(0, num_frames - 1, MIN_FRAMES, dtype=int).tolist()
+    else:
+        indices = np.linspace(0, 400, MIN_FRAMES, dtype=int).tolist()
+    selected_names = [frame_names[i] for i in indices]
+    selected_set = set(selected_names)
+    # 删除未选中的帧文件，使目录里只剩 49 帧
+    for name in frame_names:
+        if name not in selected_set:
+            os.remove(os.path.join(SOURCE_VIDEO_FRAME_DIR, name))
+else:
+    # 帧数少于 49：先保留原来所有帧，再用 ping-pong 方式补到 49
+    selected_names = frame_names.copy()
+    needed = MIN_FRAMES - num_frames
+    print(f"FG frames too short ({num_frames}), padding to {MIN_FRAMES} by ping-pong repeating frames.")
+    # 找到当前最大的编号，新帧就按编号往后接
+    existing_indices = [int(os.path.splitext(n)[0]) for n in frame_names]
+    max_idx = max(existing_indices) if existing_indices else -1
+
+    n = num_frames
+    # 从后往前 [n-1, ..., 0]
+    backward_indices = list(range(n - 1, -1, -1))
+    # 从前往后 [0, ..., n-1]
+    forward_indices = list(range(n))
+    # 交替使用：先 backward，再 forward，再 backward...
+    patterns = [backward_indices, forward_indices]
+    pattern_idx = 0  # 0 -> backward, 1 -> forward
+
+    added = 0
+    while added < needed:
+        seq = patterns[pattern_idx]
+        for idx in seq:
+            if added >= needed:
+                break
+            src_name = frame_names[idx]
+            src_path = os.path.join(SOURCE_VIDEO_FRAME_DIR, src_name)
+            img = cv2.imread(src_path)
+            new_idx = max_idx + 1 + added
+            new_name = f"{new_idx:05d}.jpg"
+            new_path = os.path.join(SOURCE_VIDEO_FRAME_DIR, new_name)
+            cv2.imwrite(new_path, img)
+            selected_names.append(new_name)
+            added += 1
+        # 切换方向：backward <-> forward
+        pattern_idx = 1 - pattern_idx
+
+
+# 重新获取 / 排序一遍剩下的帧名，后面所有逻辑沿用这个 list
+frame_names = sorted(
+    [p for p in os.listdir(SOURCE_VIDEO_FRAME_DIR)
+     if os.path.splitext(p)[-1] in [".jpg", ".jpeg", ".JPG", ".JPEG"]],
+    key=lambda p: int(os.path.splitext(p)[0])
+)
+
+print(f"After resampling, keep exactly {len(frame_names)} frames (should be 49).")
+# ---------------- 固定 49 帧结束 ----------------
+
 
 first_image_path = os.path.join(SOURCE_VIDEO_FRAME_DIR, frame_names[0])
 first_image = cv2.imread(first_image_path)
@@ -408,11 +340,20 @@ inputs = processor(images=image, text=TEXT_PROMPT, return_tensors="pt").to(devic
 with torch.no_grad():
     outputs = grounding_model(**inputs)
 
+# results = processor.post_process_grounded_object_detection(
+#     outputs,
+#     inputs.input_ids,
+#     box_threshold=0.4,
+#     text_threshold=0.3,
+#     target_sizes=[image.size[::-1]]
+# )
+
 results = processor.post_process_grounded_object_detection(
     outputs=outputs,
     threshold=0.4,                     # 统一用 threshold
     target_sizes=[image.size[::-1]],   # (H, W)，你这行是对的
 )
+
 
 input_boxes = results[0]["boxes"].cpu().numpy()
 confidences = results[0]["scores"].cpu().numpy().tolist()
