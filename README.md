@@ -1,7 +1,7 @@
 
 # GenCompositor
 
-This repository contains the implementation of the paper "GenCompositor: Generative Video Compositing with Diffusion Transformer"
+[ICLR 2026] This repository contains the implementation of the paper "GenCompositor: Generative Video Compositing with Diffusion Transformer"
 
 Keywords: Diffusion Models, Video Editing, Video Compositing
 
@@ -37,7 +37,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 
 ## 🔥 Update Log
-
+- [2025/9/2] 📢 📢  GenCompositor has been accepted by ICLR 2026.
 - [2025/9/2] 📢 📢  [GenCompositor](https://huggingface.co/TencentARC/GenCompositor) is released, the first generative video compositing framework with ERoPE for layout-unaligned video control.
 
 ## 📌 TODO
