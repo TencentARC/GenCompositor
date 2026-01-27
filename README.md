@@ -38,8 +38,8 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 
 ## 🔥 Update Log
-- [2025/9/2] 📢 📢  GenCompositor has been accepted by ICLR 2026❗️
-- [2025/9/2] 📢 📢  [GenCompositor](https://huggingface.co/TencentARC/GenCompositor) is released, the first generative video compositing framework.
+- [2026/01/26] 📢 📢  GenCompositor has been accepted by ICLR 2026❗️
+- [2025/09/02] 📢 📢  [GenCompositor](https://huggingface.co/TencentARC/GenCompositor) is released, the first generative video compositing framework.
 
 ## 📌 TODO
 
