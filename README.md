@@ -1,10 +1,10 @@
-<p align="center">
+<div align="center">
   
 # 【ICLR'2026🔥】GenCompositor: Generative Video Compositing with Diffusion Transformer
 <a href='https://gencompositor.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> &nbsp;
 <a href="https://arxiv.org/abs/2509.02460"><img src="https://img.shields.io/badge/arXiv-2509.02460-b31b1b.svg"></a> &nbsp;
 <a href="https://huggingface.co/TencentARC/GenCompositor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue"></a>
-</p>
+</div>
 
 Welcome! This repository contains the implementation of the paper "GenCompositor: Generative Video Compositing with Diffusion Transformer"
 
