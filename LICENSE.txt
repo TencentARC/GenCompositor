@@ -1,4 +1,4 @@
-This project, "VideoPainter", is fine-tuned with the assistance of "CogVideo 5B", which is subject to the The CogVideoX License. Details of the The CogVideoX License can be found in this file. 
+This project, "GenCompositor", is fine-tuned with the assistance of "CogVideo 5B", which is subject to the The CogVideoX License. Details of the The CogVideoX License can be found in this file. 
 
 In addition, usage of any components originally developed or modified by us, is also subject to the following requirement:
 
@@ -6,11 +6,11 @@ Copyright (C) 2025 THL A29 Limited, a Tencent company.  All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this Software and associated documentation files, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and/or sublicense copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-- You agree to use the VideoPainter only for academic, research and education purposes, and refrain from using it for any commercial or production purposes under any circumstances.
+- You agree to use the GenCompositor only for academic, research and education purposes, and refrain from using it for any commercial or production purposes under any circumstances.
 
 - The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-For avoidance of doubts, "Software" means the VideoPainter model inference code, training code, parameters and weights made available under this license.
+For avoidance of doubts, "Software" means the GenCompositor model inference code, training code, parameters and weights made available under this license.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
