@@ -3,6 +3,7 @@ from ...utils import is_torch_available
 
 if is_torch_available():
     from .auraflow_transformer_2d import AuraFlowTransformer2DModel
+    from .cogvideox_transformer_3d_fg3b import CogVideoXTransformer3D3BModel
     from .cogvideox_transformer_3d_fg3b_sep import CogVideoXTransformer3D3BModel_sep
     from .cogvideox_transformer_3d_inpainting import CogVideoXTransformer3DInpaintModel
     from .dit_transformer_2d import DiTTransformer2DModel
