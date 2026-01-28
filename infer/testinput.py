@@ -36,25 +36,11 @@ def quick_freeze(model):
 
 
 def apply_consistent_gamma(frames, gamma=None, gamma_range=(0.5, 2)):
-    """
-    对视频的所有帧应用相同的伽马校正（同一视频内伽马值固定）
-    
-    参数:
-        frames: torch.Tensor, 形状为 (T, C, H, W) 的视频帧
-        gamma: 如果为None，则随机生成；否则使用指定的gamma值
-        gamma_range: 伽马值的随机范围 (min, max)
-    
-    返回:
-        校正后的视频帧 (同输入形状), 使用的gamma值
-    """
-    # 生成或使用指定的gamma值
     if gamma is None:
         gamma = random.uniform(*gamma_range)
     
-    # 归一化到[0,1]范围
     frames_normalized = frames.float() / 255.0
     
-    # 应用相同的伽马校正到所有帧
     corrected_frames = torch.pow(frames_normalized, gamma) * 255.0
     
     return corrected_frames.to(frames.dtype), gamma
@@ -171,7 +157,7 @@ def read_video_with_mask(video_path, fg_video_path, masks, skip_frames_start=0, 
     binary_masks = []
     fg_resized = []
     fgy_resized = []
-    # 初始化高斯滤波器
+
     gaussian_filter = quick_freeze(get_gaussian_kernel(
         kernel_size=51,
         sigma=10,
@@ -184,23 +170,22 @@ def read_video_with_mask(video_path, fg_video_path, masks, skip_frames_start=0, 
         fg_frame_array = np.array(fg_frame)
         target_height, target_width = frame_array.shape[0], frame_array.shape[1]        # 1080, 1920
         
-        # 二值化处理
+
         frame_mask_array = np.array(frame_mask)
         if len(frame_mask_array.shape) == 3:
             frame_mask_array = cv2.cvtColor(frame_mask_array, cv2.COLOR_BGR2GRAY)
         _, binary_mask = cv2.threshold(frame_mask_array, 128, 255, cv2.THRESH_BINARY)   # (1080, 1920, 3),   255 | 0
 
-        # 形态学开运算去除小噪点
+
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
         cleaned_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_OPEN, kernel)
-        # 连通区域分析，去除小面积区域
+
         num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(cleaned_mask, 8, cv2.CV_32S)
         filtered_mask = np.zeros_like(cleaned_mask)
         for i in range(1, num_labels):
             if stats[i, cv2.CC_STAT_AREA] > target_height * target_width * 0.0001:
                 filtered_mask[labels == i] = 255
         # -------------------------------------------------------------------------------------------------------------------
-        # 转换为PyTorch张量并应用高斯滤波
         frame_tensor = to_tensor(filtered_mask / 255.0).unsqueeze(0).to("cuda").float()
         with torch.no_grad():
             filtered_tensor = gaussian_filter(frame_tensor)
@@ -226,15 +211,14 @@ def read_video_with_mask(video_path, fg_video_path, masks, skip_frames_start=0, 
                         )
         # -------------------------------------------------------------------------------------------------------------------
         # fg_resizedt = torch.from_numpy(fg_frame_resized).permute(2, 0, 1)
-        # fg_resizedt, used_gamma = apply_consistent_gamma(fg_resizedt, gamma_range=(0.7, 0.7))       # gamma启动!
+        # fg_resizedt, used_gamma = apply_consistent_gamma(fg_resizedt, gamma_range=(0.7, 0.7))       # gamma!
         # fg_frame_resized = fg_resizedt.permute(1, 2, 0).numpy()
         # -------------------------------------------------------------------------------------------------------------------
         pad_width = target_width - fg_frame_resized.shape[1]  # 1920 - 1080 = 840
         pad_left = pad_width // 2           # 420
-        # 2. 填充张量（填充值为 255）
         fg_frame_final = np.full(
                 (target_height, target_width, fg_frame_resized.shape[2]),
-                255,  # 填充值（白色）
+                255,
                 dtype=fg_frame_resized.dtype
             )
         fg_frame_final[:, pad_left : pad_left + fg_frame_resized.shape[1], :] = fg_frame_resized
@@ -337,7 +321,7 @@ def generate_video(
         transformer=unwrap_model(transformer),
         torch_dtype=dtype,
     )
-    print('Finished loading !!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print('Finished loading !!!')
     pipe.text_encoder.requires_grad_(False)
     pipe.transformer.requires_grad_(False)
     pipe.vae.requires_grad_(False)
