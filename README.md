@@ -1,21 +1,17 @@
+<p align="center">
+# 【ICLR'2026🔥】GenCompositor: Generative Video Compositing with Diffusion Transformer
+<a href='https://gencompositor.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> &nbsp;
+<a href="https://arxiv.org/abs/2509.02460"><img src="https://img.shields.io/badge/arXiv-2509.02460-b31b1b.svg"></a> &nbsp;
+<a href="https://huggingface.co/TencentARC/GenCompositor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue"></a>
+</p>
 
-# GenCompositor
-
-[ICLR 2026] This repository contains the implementation of the paper "GenCompositor: Generative Video Compositing with Diffusion Transformer"
+Welcome! This repository contains the implementation of the paper "GenCompositor: Generative Video Compositing with Diffusion Transformer"
 
 Keywords: Diffusion Models, Video Editing, Video Compositing
 
 > [Shuzhou Yang](https://ysz2022.github.io/)<sup>1</sup>, [Xiaoyu Li](https://xiaoyu258.github.io/)<sup>2‡</sup>, [Xiaodong Cun](https://vinthony.github.io/)<sup>3</sup>, [Guangzhi Wang](http://gzwang.xyz/)<sup>2</sup>, [Lingen Li](https://lg-li.github.io/)<sup>4</sup>, [Ying Shan](https://www.linkedin.com/in/YingShanProfile/)<sup>2</sup>, [Jian Zhang](https://jianzhang.tech/)<sup>1✉</sup><br>
 > <sup>1</sup>SECE, Peking University <sup>2</sup>ARC Lab, Tencent PCG <sup>3</sup>GVC Lab, Great Bay University <sup>4</sup>The Chinese University of Hong Kong
 > <sup>‡</sup>Project Lead <sup>✉</sup>Corresponding Author
-
-
-
-<p align="center">
-<a href='https://gencompositor.github.io/'><img src='https://img.shields.io/badge/Project-Page-Green'></a> &nbsp;
-<a href="https://arxiv.org/abs/2509.02460"><img src="https://img.shields.io/badge/arXiv-2509.02460-b31b1b.svg"></a> &nbsp;
-<a href="https://huggingface.co/TencentARC/GenCompositor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue"></a>
-</p>
 
 
 **📖 Table of Contents**
