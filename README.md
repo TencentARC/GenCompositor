@@ -219,7 +219,7 @@ Our code is modified based on [diffusers](https://github.com/huggingface/diffuse
 
 ## 📄 License
 
-We are pleased to support the open source community. For complete license details, see [LICENSE](LICENSE) and [NOTICE](NOTICE). 
+We are pleased to support the open source community. For complete license details, see [LICENSE](LICENSE.txt) and [NOTICE](NOTICE.txt). 
 
 ## 📬 Contact
 
