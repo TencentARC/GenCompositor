@@ -3,27 +3,23 @@ import argparse
 import os
 
 def resize_and_save_frames(bg_video_path, save_path, skip_frames=False):
-    # 打开视频文件
     cap = cv2.VideoCapture(bg_video_path)
     if not cap.isOpened():
         print("Error: Could not open video file.")
         return
 
-    # 获取原视频的总帧数
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     print(f"The total number of input video frames: {total_frames}")
 
-    # 目标 fps 统一为 12
     fps_out = 12
 
-    # 目标分辨率
     target_width = 720
     target_height = 480
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(save_path, fourcc, fps_out, (target_width, target_height))
 
-    # ---------- 计算跳帧间隔 ----------
+    #  ---------------------------------
     skip_interval = 0
     if skip_frames:
         if total_frames >= 200 and total_frames < 300:
@@ -31,17 +27,14 @@ def resize_and_save_frames(bg_video_path, save_path, skip_frames=False):
         elif total_frames >= 300 and total_frames < 400:
             skip_interval = 2
         elif total_frames >= 400:
-            # 对于400帧以上的视频，每增加100帧，跳帧间隔增加1
-            # skip_interval = (total_frames // 100) - 2
             skip_interval = 3
-        print(f"启用跳帧功能，跳帧间隔: {skip_interval}")
+        print(f"Enable frame skipping function, frame skipping interval: {skip_interval}")
     stride = skip_interval + 1
     # ---------------------------------
 
     frames_written = 0
     frame_idx = 0
 
-    # 记录已经写出的所有帧，用于后续补帧
     sampled_frames = []
 
     while True:
@@ -49,7 +42,6 @@ def resize_and_save_frames(bg_video_path, save_path, skip_frames=False):
         if not ret:
             break
 
-        # 按 stride 采样：取一帧跳 skip_interval 帧
         if frame_idx % stride == 0 and frame_idx < 49 * stride:
             resized_frame = cv2.resize(frame, (target_width, target_height))
             out.write(resized_frame)
@@ -59,23 +51,22 @@ def resize_and_save_frames(bg_video_path, save_path, skip_frames=False):
 
     MIN_FRAMES = 49
 
-    # 如果一个采样帧都没有，直接报错
     if frames_written == 0:
         print("Error: No frames were written to output video.")
         cap.release()
         out.release()
         return
 
-    # ---------- 新的补帧逻辑：后→前→前→后 ping-pong ----------
+    # ---------- Frame interpolation logic：ping-pong ----------
     if frames_written < MIN_FRAMES:
         print(f"Video is short, pad {MIN_FRAMES - frames_written} frames to reach {MIN_FRAMES}.")
 
         n = len(sampled_frames)
-        # 从后往前的索引序列，例如 [n-1, n-2, ..., 0]
+        # The index from back to front, such as [n-1, n-2, ..., 0]
         backward_indices = list(range(n - 1, -1, -1))
-        # 从前往后的索引序列，例如 [0, 1, ..., n-1]
+        # The index from front to back, such as [0, 1, ..., n-1]
         forward_indices = list(range(n))
-        # 交替使用：先 backward，再 forward，再 backward ...
+        # Alternately ...
         patterns = [backward_indices, forward_indices]
         pattern_idx = 0  # 0 -> backward, 1 -> forward
 
@@ -87,7 +78,7 @@ def resize_and_save_frames(bg_video_path, save_path, skip_frames=False):
                 frame_to_add = sampled_frames[idx]
                 out.write(frame_to_add)
                 frames_written += 1
-            # 切换方向
+            # Switch direction
             pattern_idx = 1 - pattern_idx
     # ----------------------------------------------------------
 
