@@ -32,7 +32,6 @@ else:
     _import_structure["pipeline_cogvideox_image2video_inpainting"] = ["CogVideoXImageToVideoInpaintPipeline"]
     _import_structure["pipeline_cogvideox_inpainting_i2v_branch3"] = ["CogVideoXI2VTriInpaintPipeline"]
     _import_structure["pipeline_cogvideox_inpainting_i2v_branch3_sep"] = ["CogVideoXI2VTriInpaintPipeline_sep"]
-    _import_structure["pipeline_cogvideox_inpainting_i2v_branch3_112"] = ["CogVideoXI2VTriInpaint112Pipeline"]
     _import_structure["pipeline_cogvideox_inpainting_i2v_branch_anyl"] = ["CogVideoXI2VDualInpaintAnyLPipeline"]
     _import_structure["pipeline_cogvideox_inpainting_i2v_anyl"] = ["CogVideoXI2VInpaintAnyLPipeline"]
 if TYPE_CHECKING or DIFFUSERS_SLOW_IMPORT:
@@ -52,7 +51,6 @@ if TYPE_CHECKING or DIFFUSERS_SLOW_IMPORT:
         from .pipeline_cogvideox_inpainting_sft import CogVideoXSFTInpaintPipeline
         from .pipeline_cogvideox_image2video_inpainting import CogVideoXImageToVideoInpaintPipeline
         from .pipeline_cogvideox_inpainting_i2v_branch3 import CogVideoXI2VTriInpaintPipeline
-        from .pipeline_cogvideox_inpainting_i2v_branch3_112 import CogVideoXI2VTriInpaint112Pipeline
         from .pipeline_cogvideox_inpainting_i2v_branch3_sep import CogVideoXI2VTriInpaintPipeline_sep
         from .pipeline_cogvideox_inpainting_i2v_anyl import CogVideoXI2VInpaintAnyLPipeline
 else:

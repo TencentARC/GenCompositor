@@ -241,10 +241,6 @@ class CogVideoXI2VTriInpaintPipeline_sep(DiffusionPipeline, CogVideoXLoraLoaderM
 
         if untruncated_ids.shape[-1] >= text_input_ids.shape[-1] and not torch.equal(text_input_ids, untruncated_ids):
             removed_text = self.tokenizer.batch_decode(untruncated_ids[:, max_sequence_length - 1 : -1])
-            # logger.warning(
-            #     "The following part of your input was truncated because `max_sequence_length` is set to "
-            #     f" {max_sequence_length} tokens: {removed_text}"
-            # )
 
         prompt_embeds = self.text_encoder(text_input_ids.to(device))[0]
         prompt_embeds = prompt_embeds.to(dtype=dtype, device=device)
@@ -418,10 +414,6 @@ class CogVideoXI2VTriInpaintPipeline_sep(DiffusionPipeline, CogVideoXLoraLoaderM
     def prepare_mask_latents(
         self, mask, masked_video, fg_condition, batch_size, height, width, dtype, device, generator, do_classifier_free_guidance
     ):
-        # resize the mask to latents shape as we concatenate the mask to the latents
-        # we do that before converting to dtype to avoid breaking in case we're using cpu_offload
-        # and half precision
-        # mask0: [1, 1, 49, 480, 720]
         mask = torch.nn.functional.interpolate(
             mask, size=((mask.shape[-3] - 1) // self.vae_scale_factor_temporal + 1, height // self.vae_scale_factor_spatial, width // self.vae_scale_factor_spatial)
         )
@@ -429,7 +421,6 @@ class CogVideoXI2VTriInpaintPipeline_sep(DiffusionPipeline, CogVideoXLoraLoaderM
 
         masked_video = masked_video.to(device=device, dtype=dtype)
         fg_video = fg_condition.to(device=device, dtype=dtype)
-        # mask: [1, 1, 13, 60, 90] masked_video: [1, 3, 49, 480, 720] fg_video: [1, 3, 49, 480, 720]
 
         if masked_video.shape[1] == 4:
             masked_video_latents = masked_video
@@ -858,7 +849,6 @@ class CogVideoXI2VTriInpaintPipeline_sep(DiffusionPipeline, CogVideoXLoraLoaderM
             do_classifier_free_guidance,
         )
         mask = mask.permute(0, 2, 1, 3, 4).repeat(1, 1, latent_channels, 1, 1)
-        # mask: [2, 13, 16, 60, 90]    |    masked_video_latents: [2, 13, 16, 60, 90]
 
         # 6. Prepare extra step kwargs. TODO: Logic should ideally just be moved out of the pipeline
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
