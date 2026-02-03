@@ -85,6 +85,7 @@ We recommend you first use `conda` to create virtual environment, and install ne
 ```
 conda create -n gencompositor python=3.10 -y
 conda activate gencompositor
+cd ./GenCompositor
 pip install -r requirements.txt
 ```
 
