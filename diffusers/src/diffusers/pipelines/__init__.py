@@ -151,7 +151,6 @@ else:
         "CogVideoXSelfGuidanceInpaintPipeline",
         "CogVideoXSFTInpaintPipeline",
         "CogVideoXImageToVideoInpaintPipeline",
-        "CogVideoXI2VTriInpaintPipeline",
         "CogVideoXI2VTriInpaintPipeline_sep",
         "CogVideoXI2V4InpaintPipeline",
         "CogVideoXI2VDualInpaintAnyLPipeline",
@@ -479,7 +478,7 @@ if TYPE_CHECKING or DIFFUSERS_SLOW_IMPORT:
         )
         from .aura_flow import AuraFlowPipeline
         from .blip_diffusion import BlipDiffusionPipeline
-        from .cogvideo import CogVideoXImageToVideoPipeline, CogVideoXPipeline, CogVideoXVideoToVideoPipeline, CogVideoXInpaintPipeline, CogVideoXDualInpaintPipeline, CogVideoXSelfGuidanceInpaintPipeline, CogVideoXSFTInpaintPipeline, CogVideoXImageToVideoInpaintPipeline, CogVideoXI2VTriInpaintPipeline, CogVideoXI2VTriInpaintPipeline_sep, CogVideoXI2V4InpaintPipeline, CogVideoXI2VDualInpaintAnyLPipeline, CogVideoXI2VInpaintAnyLPipeline
+        from .cogvideo import CogVideoXImageToVideoPipeline, CogVideoXPipeline, CogVideoXVideoToVideoPipeline, CogVideoXInpaintPipeline, CogVideoXDualInpaintPipeline, CogVideoXSelfGuidanceInpaintPipeline, CogVideoXSFTInpaintPipeline, CogVideoXImageToVideoInpaintPipeline, CogVideoXI2VTriInpaintPipeline_sep, CogVideoXI2V4InpaintPipeline, CogVideoXI2VDualInpaintAnyLPipeline, CogVideoXI2VInpaintAnyLPipeline
         from .controlnet import (
             BlipDiffusionControlNetPipeline,
             StableDiffusionControlNetImg2ImgPipeline,
