@@ -200,7 +200,36 @@ python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --vi
 
 </details>
 
+## 🤖 Train
+<details>
+Curate your VideoComp dataset as:
 
+```
+|-- VideoComp
+    |-- filtered_mask
+        |-- 40029.mp4
+        |-- 40031.mp4
+        |-- ...
+    |-- filtered_masked_video
+        |-- 40029.mp4
+        |-- 40031.mp4
+        |-- ...
+    |-- inpainted_sum
+        |-- 40029.mp4
+        |-- 40031.mp4
+        |-- ...
+    |-- GTs
+        |-- 40029.mp4
+        |-- 40031.mp4
+        |-- ...
+    |-- fg
+        |-- 40029.mp4
+        |-- 40031.mp4
+        |-- ...
+        |-- white_video.mp4
+```
+
+</details>
 
 ## 🤝🏼 Cite Us
 
