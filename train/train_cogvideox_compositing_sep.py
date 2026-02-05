@@ -1,4 +1,3 @@
-# Standard library imports
 import os
 import warnings
 
@@ -84,10 +83,6 @@ if is_wandb_available():
 
 # Configure logging
 logger = get_logger(__name__)
-
-
-# os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-
 
 def calculate_max_ratio_torch(video_tensor, output_height=576):
     max_ratio = 0.0
@@ -2277,3 +2272,4 @@ def main(args):
 if __name__ == "__main__":
     args = get_args()
     main(args)
+
