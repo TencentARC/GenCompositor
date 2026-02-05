@@ -38,6 +38,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 
 
 ## 🔥 Update Log
+- [2026/02/06] 📢 📢  We released the training code today, HAPPY CHINESE NEW YEAR🎉🎉🎊🎊🎁🎁
 - [2026/01/26] 📢 📢  [GenCompositor](https://openreview.net/forum?id=ynim5u2N4i) has been accepted by ICLR 2026❗️
 - [2025/09/02] 📢 📢  [GenCompositor](https://huggingface.co/TencentARC/GenCompositor) is released, the first generative video compositing framework.
 
@@ -46,7 +47,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 - [x] Release inference code
 - [x] Release gradio demo
 - [x] Release [GenCompositor checkpoints](https://huggingface.co/TencentARC/GenCompositor) (based on CogVideoX-5B)
-- [ ] Release training code
+- [x] Release training code
 - [ ] Dataset curation code
 ## 🛠️ Method Overview
 
@@ -229,6 +230,10 @@ Curate your VideoComp dataset as:
         |-- 40031.mp4
         |-- ...
         |-- white_video.mp4
+```
+Modify [this line of code](https://github.com/TencentARC/GenCompositor/blob/main/train/train_cogvideox_compositing_sep.py#L82) to input your own WANDB API to visualize training loss curve:
+```
+os.environ["WANDB_API_KEY"] = "INPUT_YOUR_API_HERE"
 ```
 
 Then, train with the script:
