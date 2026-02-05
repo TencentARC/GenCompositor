@@ -30,6 +30,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
   - [🏃🏼 Running Scripts](#-running-scripts)
     - [Gradio Demo 🤗](#-gradio-demo-)
     - [Inference 📜](#-inference-)
+  - [🤖 Train](#-train)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
@@ -202,6 +203,7 @@ python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --vi
 
 ## 🤖 Train
 <details>
+<summary><b>Train Scripts</b></summary>
 Curate your VideoComp dataset as:
 
 ```
@@ -227,6 +229,12 @@ Curate your VideoComp dataset as:
         |-- 40031.mp4
         |-- ...
         |-- white_video.mp4
+```
+
+Then, train with the script:
+```
+cd train
+bash train.sh
 ```
 
 </details>
