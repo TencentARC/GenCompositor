@@ -204,7 +204,7 @@ python testinput.py --fg_video_path "../assets/fg/element/fg_butterfly.mp4" --vi
 
 ## 🤖 Train
 <details>
-<summary><b>Train Scripts</b></summary>
+<summary><b>Train Scripts 🧠</b></summary>
 Curate your VideoComp dataset as:
 
 ```
