@@ -31,6 +31,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
     - [Gradio Demo 🤗](#-gradio-demo-)
     - [Inference 📜](#-inference-)
   - [🤖 Train](#-train)
+    - [Train Scripts 🧠](#-train-scripts-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
