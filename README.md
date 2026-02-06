@@ -231,7 +231,7 @@ Curate your VideoComp dataset as:
         |-- ...
         |-- white_video.mp4
 ```
-Modify [this line of code](https://github.com/TencentARC/GenCompositor/blob/main/train/train_cogvideox_compositing_sep.py#L82) to input your own WANDB API to visualize training loss curve:
+Modify [this line of code](https://github.com/TencentARC/GenCompositor/blob/main/train/train_cogvideox_compositing_sep.py#L81) to input your own WANDB API to visualize training loss curve:
 ```
 os.environ["WANDB_API_KEY"] = "INPUT_YOUR_API_HERE"
 ```
