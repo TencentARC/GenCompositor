@@ -1,7 +1,7 @@
 export MODEL_PATH="../ckpts/CogVideoX-5b-I2V"
 export BRANCH_PATH="../ckpts/branch"
 export CACHE_PATH="~/.cache"
-export DATASET_PATH="../VideoComp"
+export DATASET_PATH="../VideoComp_demo"
 export PROJECT_NAME="compositing"
 export RUNS_NAME="GenCompositor_sep"
 export OUTPUT_PATH="./${PROJECT_NAME}/${RUNS_NAME}"
