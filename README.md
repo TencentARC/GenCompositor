@@ -248,11 +248,13 @@ bash train.sh
 ## 🤝🏼 Cite Us
 
 ```
-@article{GenCompositor,
+@inproceedings{
+  yang2026gencompositor,
   title={GenCompositor: Generative Video Compositing with Diffusion Transformer},
   author={Shuzhou Yang and Xiaoyu Li and Xiaodong Cun and Guangzhi Wang and Lingen Li and Ying Shan and Jian Zhang},
-  journal={arXiv preprint arXiv:2509.02460},
-  year={2025}
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026},
+  url={https://openreview.net/forum?id=ynim5u2N4i}
 }
 ```
 
