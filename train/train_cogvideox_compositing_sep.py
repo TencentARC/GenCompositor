@@ -161,7 +161,7 @@ def concatenate_images_horizontally(images1, images2, images3, images4, output_t
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="Simple example of a training script for VideoPainter.")
+    parser = argparse.ArgumentParser(description="Simple example of a training script for GenCompositor.")
 
     # Model information
     parser.add_argument(
@@ -1472,7 +1472,6 @@ def get_optimizer(args, params_to_optimize, use_deepspeed: bool = False):
 
 
 def main(args):
-    # wandb.init(project='wandb_usage', name='VideoPainter', config=args)
     if args.report_to == "wandb" and args.hub_token is not None:
         raise ValueError(
             "You cannot use both --report_to=wandb and --hub_token due to a security risk of exposing your token."
@@ -1830,7 +1829,7 @@ def main(args):
     # We need to initialize the trackers we use, and also store our configuration.
     # The trackers initializes automatically on the main process.
     if accelerator.is_main_process:
-        tracker_name = args.tracker_name or "VideoPainter"
+        tracker_name = args.tracker_name or "GenCompositor"
         accelerator.init_trackers(
             project_name="wandb_usage",
             config=vars(args),
@@ -2272,4 +2271,5 @@ def main(args):
 if __name__ == "__main__":
     args = get_args()
     main(args)
+
 
