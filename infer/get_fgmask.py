@@ -192,7 +192,9 @@ video_name = VIDEO_PATH.split('/')[-1]
 save_path = os.path.join(args.save_path, video_name)
 mask_path = os.path.join(args.mask_path, video_name)
 fg_path = os.path.join(args.fg_path, video_name)
-
+os.makedirs(os.path.dirname(save_path), exist_ok=True)
+os.makedirs(os.path.dirname(mask_path), exist_ok=True)
+os.makedirs(os.path.dirname(fg_path), exist_ok=True)
 
 TEXT_PROMPT = objs[0] + ", identify the most obvious one only."
 
