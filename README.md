@@ -117,9 +117,9 @@ Checkpoints of GenCompositor can be downloaded from [here](https://huggingface.c
 
 You can download the checkpoints, and put the checkpoints to the `ckpts` folder by:
 ```
-git lfs install
-git clone https://huggingface.co/TencentARC/GenCompositor
-mv GenCompositor ckpts
+mkdir ckpts
+cd ckpts
+huggingface-cli download --resume-download TencentARC/GenCompositor --local-dir ./
 ```
 
 You also need to download the base model [CogVideoX-5B-I2V](https://huggingface.co/THUDM/CogVideoX-5b-I2V) by:
