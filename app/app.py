@@ -46,9 +46,9 @@ def unwrap_model(model):
 
 # Pre-load models
 dtype = torch.bfloat16
-model_path = "/group/40005/shuzhouyang/huggingface/CogVideoX-5b-I2V"
+model_path = "../ckpts/CogVideoX-5b-I2V"
 inpainting_branch = "../ckpts/branch"
-transformer_path = "/group/40005/shuzhouyang/GenCompositor-main/train/compositing/GenCompositor_sep/checkpoint-45056"
+transformer_path = "../ckpts/model"
 
 branch = CogvideoXBranchModel.from_pretrained(inpainting_branch, torch_dtype=dtype).to("cuda", dtype=dtype)
 transformer = CogVideoXTransformer3D3BModel_sep.from_pretrained(
