@@ -1,0 +1,12 @@
+{
+  "stem": "40029",
+  "description": "The video captures an underwater scene, likely in a coral reef environment. The main focus is on a school of fish swimming gracefully through the water. The fish are small and appear to be moving in a coordinated manner, creating a dynamic and fluid motion as they navigate the aquatic landscape. In the foreground, there is a rocky seabed covered with various types of marine life, including corals and possibly some algae. The rocks have a rough texture and are interspersed with patches of greenery, adding to the natural beauty of the scene. Above the fish, the surface of the water is visible, showing ripples and reflections of light, which adds depth and dimension to the video. The overall atmosphere is serene and peaceful, capturing the essence of life beneath the waves.",
+  "nouns": [
+    "fish"
+  ],
+  "primary_noun": "fish",
+  "nouns_raw": "fish",
+  "skip": false,
+  "reason": "ok",
+  "label_version": "gencomp-label-v1"
+}
