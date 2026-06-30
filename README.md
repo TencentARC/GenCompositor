@@ -49,7 +49,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
 - [x] Release gradio demo
 - [x] Release [GenCompositor checkpoints](https://huggingface.co/TencentARC/GenCompositor) (based on CogVideoX-5B)
 - [x] Release training code
-- [ ] Dataset curation code
+- [x] Dataset curation code
 ## 🛠️ Method Overview
 
 ![](assets/method.jpg)
@@ -244,6 +244,70 @@ bash train.sh
 ```
 
 </details>
+
+
+
+## 🗂️ Dataset Curation
+
+<details>
+<summary><b>Dataset Curation Scripts</b></summary>
+
+We provide an end-to-end pipeline to build the **VideoComp** dataset from raw source videos, following the two-stage process (data curation and data filtering) described in Sect. B of our paper. Given a folder of source videos, the pipeline automatically produces the three video samples required for training: the **source video**, the **foreground video** (dynamic element centered in each frame), and the **mask video** (preserving the original motion trajectory).
+
+The pipeline leverages advanced models as tools: a vision-language model ([Qwen3.6](https://huggingface.co/Qwen/Qwen3.6-27B), served via [vLLM](https://qwen.readthedocs.io/en/latest/deployment/vllm.html)) for labeling and [Grounded SAM2](https://github.com/IDEA-Research/Grounded-SAM-2) for segmentation.
+
+> The Labeling stage requires a **running [Qwen3.6](https://huggingface.co/Qwen/Qwen3.6-27B) vision-language endpoint** that can take video input. Deploy it with vLLM following the [official guide](https://qwen.readthedocs.io/en/latest/deployment/vllm.html), e.g.
+> ```
+> vllm serve Qwen/Qwen3.6-27B --port 9000 --limit-mm-per-prompt video=2
+> ```
+> Then point the scripts to the served endpoint via environment variables (defaults shown):
+> ```
+> export VOE_QWEN_VL_URL="http://<HOST>:9000/v1"   # OpenAI-compatible base url
+> export VOE_QWEN_VL_MODEL="Qwen3.6-27B"           # served model name
+> ```
+> The labeling scripts call this endpoint through an OpenAI-compatible Chat Completions API with `video_url` (`file://`) inputs, so any vLLM-served Qwen3.6 vision-language model works.
+
+**Stage 1 · Labeling.** We feed the sampled video frames to QWen to obtain a detailed description, and then ask it to identify the most prominent dynamic object in the video, returning a set of nouns (or `NULL` if none exists). The results are cached as sidecar files under `output/_labels/`.
+
+```
+# Identify the most prominent dynamic element of each source video.
+# Cases with no significant object (QWen returns NULL) are marked as skipped.
+cd gencomp_data
+python gencomp_label.py --video_dir /path/to/source_videos --workers 8
+```
+
+**Stage 2 · Segmentation.** Based on the QWen label, we employ Grounded SAM2 to segment the element throughout the video. We save its **mask video** (which shows the original motion trajectory) and its **foreground video**. Note that when saving the foreground video, we center the dynamic element in each frame, eliminating its global position and trajectory information. This allows the resulting trajectory to be controlled entirely by the mask video rather than the foreground video.
+
+```
+# Segment the labeled element, then save the mask video and the centered foreground video.
+cd gencomp_data
+python gencomp_segment.py --video_dir /path/to/source_videos
+```
+
+**Data Filtering** is applied automatically during the two stages following our principles: cases where QWen returns `NULL` are excluded; for videos with multiple elements, only the one with the highest probability is selected; and suboptimal cases where elements have incomplete or excessively fragmented structures (e.g., touching the frame boundary or being too small) are filtered out. We recommend a final manual screening to remove visually unappealing samples.
+
+The pipeline outputs the dataset directly into the structure expected by training:
+
+```
+|-- output
+    |-- filtered_masked_video      # source videos
+        |-- 40029.mp4
+        |-- ...
+    |-- filtered_mask              # mask videos (original trajectory)
+        |-- 40029.mp4
+        |-- ...
+    |-- fg                         # foreground videos (centered, 576x576)
+        |-- 40029.mp4
+        |-- ...
+    |-- _labels                    # QWen labeling results (sidecar cache)
+        |-- 40029.json
+        |-- ...
+```
+
+> Both stages cache their results, so reruns will skip finished cases. Use `--force` to recompute, or `--limit N` / `--single <name>` to process a subset for a quick trial. The foreground canvas size can be adjusted via the `VE_GC_FG_SIZE` environment variable (default `576`).
+
+</details>
+
 
 ## 🤝🏼 Cite Us
 
