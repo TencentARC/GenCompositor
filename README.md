@@ -33,7 +33,7 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
   - [🤖 Train](#-train)
     - [Train Scripts 🧠](#-train-scripts-)
   - [🗂️ Dataset Curation](#-dataset-curation)
-    - [Curation Scripts](#-curation-scripts-)
+    - [Curation Scripts 🎞](#-curation-scripts-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
@@ -252,7 +252,7 @@ bash train.sh
 ## 🗂️ Dataset Curation
 
 <details>
-<summary><b>Curation Scripts</b></summary>
+<summary><b>Curation Scripts 🎞</b></summary>
 
 We provide an end-to-end pipeline to build the **VideoComp** dataset from raw source videos, following the two-stage process (data curation and data filtering) described in Sect. B of our paper. Given a folder of source videos, the pipeline automatically produces the three video samples required for training: the **source video**, the **foreground video** (dynamic element centered in each frame), and the **mask video** (preserving the original motion trajectory).
 
