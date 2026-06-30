@@ -32,6 +32,8 @@ Keywords: Diffusion Models, Video Editing, Video Compositing
     - [Inference 📜](#-inference-)
   - [🤖 Train](#-train)
     - [Train Scripts 🧠](#-train-scripts-)
+  - [🗂️ Dataset Curation](#-dataset-curation)
+    - [Dataset Curation Scripts](#-dataset-curation-scripts-)
   - [🤝🏼 Cite Us](#-cite-us)
   - [💖 Acknowledgement](#-acknowledgement)
   - [📄 License](#-license)
